@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const morgan = require('morgan');
 const { json } = require('body-parser');
 
@@ -8,6 +9,7 @@ const app = express();
 
 app.use(morgan('dev'));
 app.use(json());
+app.use(express.static(path.resolve(__dirname, '..', 'client', 'build')));
 
 app.get('/ping', (request, response) => {
   response.json({
