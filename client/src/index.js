@@ -17,7 +17,8 @@ class App extends Component {
       lastSyncedText: '',
       postID: 1, // hardcoded for now.
       userID: 'abinavseelan', // hardcoded for now
-      error: '',
+      error: false,
+      toast: '',
     };
 
     this.syncServer = debounce(500, this.syncServer.bind(this));
@@ -59,7 +60,8 @@ class App extends Component {
       })
       .catch(() => {
         this.setState({
-          error: 'Oops. Something went wrong while syncing your work. Please refresh the page',
+          error: true,
+          toast: 'Oops. Something went wrong while syncing your work. Please refresh the page',
         });
       });
   }
@@ -72,7 +74,25 @@ class App extends Component {
   }
 
   handleSubmit() {
-    console.log(this.state.currentText);
+    Request
+      .post('/api/comments', {
+        comment: this.state.currentText,
+        postID: this.state.postID,
+        userID: this.state.userID,
+      })
+      .then(() => {
+        this.setState({
+          toast: 'Success! Comment posted.',
+          currentText: '',
+          lastSyncedText: '',
+        });
+      })
+      .catch(() => {
+        this.setState({
+          error: true,
+          toast: 'Oops. Something went wrong while syncing your work. Please refresh the page',
+        });
+      });
   }
 
   render() {

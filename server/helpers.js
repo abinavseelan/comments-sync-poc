@@ -58,7 +58,35 @@ module.exports = {
         });
     });
   },
-  saveComment() {
+  saveComment(user, post, comment) {
+    return new Promise((resolve, reject) => {
+      const entry = {
+        user,
+        post,
+        comment,
+        created_at: new Date(),
+      };
 
+      Comment
+        .create(entry, (err, newComment) => {
+          if (err) {
+            return reject(err);
+          }
+
+          return resolve(newComment);
+        });
+    });
+  },
+  deleteDraft(user, post) {
+    return new Promise((resolve, reject) => {
+      Draft
+        .remove({ user, post }, (err, draft) => {
+          if (err) {
+            return reject(err);
+          }
+
+          return resolve(draft);
+        });
+    });
   },
 };

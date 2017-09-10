@@ -5,7 +5,13 @@ const { json } = require('body-parser');
 const mongoose = require('mongoose');
 
 const { port, db } = require('../config');
-const { fetchDraft, createNewDraft, updateDraft } = require('./helpers');
+const {
+  fetchDraft,
+  createNewDraft,
+  updateDraft,
+  saveComment,
+  deleteDraft,
+} = require('./helpers');
 
 const app = express();
 
@@ -92,7 +98,38 @@ app.get('/api/comments/drafts', (request, response) => {
 });
 
 app.post('/api/comments', (request, response) => {
+  const { postID, userID, comment } = request.body;
 
+  if (!userID) {
+    response.status(401).json({
+      error: 'Unauthorized',
+    });
+  }
+
+  if (!postID) {
+    response.status(400).json({
+      error: 'Post not set. Cannot process comment diff',
+    });
+  }
+
+  if (!comment) {
+    response.status(400).json({
+      error: 'Empty comment. Ignoring.',
+    });
+  }
+
+  saveComment(userID, postID, comment)
+    .then(() => {
+      response.sendStatus(201);
+    })
+    .then(() => {
+      deleteDraft(userID, postID);
+    })
+    .catch((error) => {
+      response.status(500).json({
+        error,
+      });
+    });
 });
 
 app.listen(port, () => {
