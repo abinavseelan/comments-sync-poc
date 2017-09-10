@@ -26,19 +26,6 @@ app.get('/ping', (request, response) => {
   });
 });
 
-/*
-  Requirements:
-  1. An endpoint to store the comment partials :- (PUT)
-    - Take `post_id` as parameters and `user` information via token
-    - Comment diff in the body
-    - Query db, update comment string and save back in db
-  # TODO : Find a way to prevent race-condition. Will that be handled by the client or the server? 🤔
-
-  2. An endpoint to retrieve the partial comment (GET)
-
-  3. An endpoint to save comment to actual comments collection and clear partial (POST)
-*/
-
 app.put('/api/comments/drafts', (request, response) => {
   const { userID, patch, postID } = request.body;
 

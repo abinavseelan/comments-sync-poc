@@ -96,13 +96,27 @@ class App extends Component {
   }
 
   render() {
+    const { toast, error, currentText } = this.state;
+    const toastClass = error ? styles['toast-error'] : styles['toast-success'];
+
     return (
       <div className={styles.container}>
+        {
+          toast
+            ? (
+              <div className={`${styles.toast} ${toastClass}`}>
+                {this.state.toast}
+              </div>
+            )
+            : (
+              null
+            )
+        }
         <textarea
           className={styles['comments-container']}
           placeholder="Write your response..."
           onChange={this.handleInput}
-          value={this.state.currentText}
+          value={currentText}
         />
         <div className={styles.cta}>
           <button className={styles['post-btn']} onClick={this.handleSubmit}>
