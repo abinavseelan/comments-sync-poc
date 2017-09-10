@@ -1,5 +1,11 @@
 # build
 build
+client/build
+
+# db
+
+data
+data/db
 
 # Logs
 logs

@@ -2,14 +2,17 @@ const express = require('express');
 const path = require('path');
 const morgan = require('morgan');
 const { json } = require('body-parser');
+const mongoose = require('mongoose');
 
-const { port } = require('../config');
+const { port, db } = require('../config');
+const { fetchDraft, createNewDraft, updateDraft } = require('./helpers');
 
 const app = express();
 
 app.use(morgan('dev'));
 app.use(json());
 app.use(express.static(path.resolve(__dirname, '..', 'client', 'build')));
+mongoose.connect(db);
 
 app.get('/ping', (request, response) => {
   response.json({
@@ -30,43 +33,50 @@ app.get('/ping', (request, response) => {
   3. An endpoint to save comment to actual comments collection and clear partial (POST)
 */
 
-app.put('/comments/drafts', (request, response) => {
-  const { post_id: postID } = request.params;
-  const { userID, draft } = request.body;
+app.put('/api/comments/drafts', (request, response) => {
+  const { userID, patch, postID } = request.body;
 
   if (!userID) {
     response.status(401).json({
       error: 'Unauthorized',
     });
-
-    return null;
   }
 
   if (!postID) {
     response.status(400).json({
       error: 'Post not set. Cannot process comment diff',
     });
-
-    return null;
   }
 
-  if (!draft) {
+  if (!patch) {
     response.status(400).json({
       error: 'Empty comment diff. Ignoring.',
     });
-
-    return null;
   }
 
-  console.log(commentPartial);
-  response.status(204);
+  fetchDraft(userID, postID)
+    .then((oldDraft) => {
+      if (oldDraft === 'noop') {
+        return createNewDraft(userID, postID);
+      }
+      console.log(oldDraft);
+      return updateDraft(oldDraft, patch);
+    })
+    .then(() => {
+      response.sendStatus(204);
+    })
+    .catch((error) => {
+      response.status(500).json({
+        error,
+      });
+    });
 });
 
-app.get('/comments/partials', (request, response) => {
+app.get('/api/comments/draft', (request, response) => {
 
 });
 
-app.post('/comments', (request, response) => {
+app.post('/api/comments', (request, response) => {
 
 });
 

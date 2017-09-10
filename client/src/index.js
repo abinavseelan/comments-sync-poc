@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { render } from 'react-dom';
 import { debounce } from 'throttle-debounce';
 import { createPatch, applyPatch } from 'diff';
+import Request from 'axios';
 
 import styles from './index.scss';
 
@@ -14,6 +15,9 @@ class App extends Component {
     this.state = {
       currentText: '',
       lastSyncedText: '',
+      postID: 1, // hardcoded for now.
+      userID: 'abinavseelan', // hardcoded for now
+      error: '',
     };
 
     this.syncServer = debounce(500, this.syncServer.bind(this));
@@ -22,12 +26,29 @@ class App extends Component {
   }
 
   syncServer() {
-    const { lastSyncedText, currentText } = this.state;
+    const { lastSyncedText, currentText, postID, error, userID } = this.state;
     const patch = createPatch('tmp', lastSyncedText, currentText, 'tmp', 'tmp');
 
-    this.setState({
-      lastSyncedText: applyPatch(lastSyncedText, patch),
-    });
+    if (error) {
+      return;
+    }
+
+    Request
+      .put('/api/comments/drafts', {
+        patch,
+        userID,
+        postID,
+      })
+      .then(() => {
+        this.setState({
+          lastSyncedText: applyPatch(lastSyncedText, patch),
+        });
+      })
+      .catch(() => {
+        this.setState({
+          error: 'Oops. Something went wrong while syncing your work. Please refresh the page',
+        });
+      });
   }
 
   handleInput(event) {
