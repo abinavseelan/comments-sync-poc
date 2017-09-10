@@ -2,6 +2,8 @@
 
 A PoC to demo real-time diff based text syncing.
 
+![sep-11-2017 01-49-54](https://user-images.githubusercontent.com/6417910/30252625-ac1354c4-9693-11e7-8ad9-685159a742e2.gif)
+
 ## Features
 
 - Syncs text-diffs with server in *real-time*
