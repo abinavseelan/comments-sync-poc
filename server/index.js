@@ -27,12 +27,12 @@ app.get('/ping', (request, response) => {
 
   2. An endpoint to retrieve the partial comment (GET)
 
-  3. An endpoint to move comment from partials to actual comments collection (POST)
+  3. An endpoint to save comment to actual comments collection and clear partial (POST)
 */
 
-app.put('/comments/partials', (request, response) => {
+app.put('/comments/drafts', (request, response) => {
   const { post_id: postID } = request.params;
-  const { userID, commentPartial } = request.body;
+  const { userID, draft } = request.body;
 
   if (!userID) {
     response.status(401).json({
@@ -50,7 +50,7 @@ app.put('/comments/partials', (request, response) => {
     return null;
   }
 
-  if (!commentPartial) {
+  if (!draft) {
     response.status(400).json({
       error: 'Empty comment diff. Ignoring.',
     });

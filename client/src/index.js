@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 import { debounce } from 'throttle-debounce';
+import { createPatch, applyPatch } from 'diff';
 
 import styles from './index.scss';
 
@@ -21,14 +22,17 @@ class App extends Component {
   }
 
   syncServer() {
-    console.log(this.state.currentText);
+    const { lastSyncedText, currentText } = this.state;
+    const patch = createPatch('tmp', lastSyncedText, currentText, 'tmp', 'tmp');
+
+    this.setState({
+      lastSyncedText: applyPatch(lastSyncedText, patch),
+    });
   }
 
   handleInput(event) {
     const text = event.target.value;
-    this.setState({
-      currentText: text,
-    }, () => {
+    this.setState({ currentText: text }, () => {
       this.syncServer();
     });
   }
