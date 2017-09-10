@@ -7,9 +7,9 @@ A PoC to demo real-time diff based text syncing.
 ## Features
 
 - Syncs text-diffs with server in *real-time*
-- Syncing is debounced on the client to prevent too many calls. Text is synced when the user has paused typing (500 ms)
+- Syncing is *debounced* on the client to limit sync calls. Text is synced when the user has paused typing (500 ms)
 - Text are stored as drafts. An assumption that is made is that a draft is *unique* for a given user & a given post.
-- Drafts can be loaded on any device to continue work from there. All that is required is the user ID and post ID to fetch the draft for the post.
+- Drafts can be loaded on any device to continue work from there. All that is required is the user ID and post ID to fetch the draft for the post and continue your work. :slightly_smiling_face:
 - Saving a text post will purge the draft.
 
 ## Setup Guide
@@ -22,7 +22,7 @@ You will need:
 
 ### Setting up MongoDB
 
-We require a persistent data store to save our `Drafts` and `Comments`. To do this, we need to run the Mongo Daemon so that our NodeJS server can connect to it.
+We require a persistent data store to save our `Drafts` and `Comments`, and our storage of choice for this PoC is MongoDB. We need to run the Mongo Daemon so that our NodeJS server can connect to it and access data.
 
 To run the mongo daemon, run the command `mongod`. We can also pass a `-dbpath` flag to specify the directory we want the data to be stored in. 
 
