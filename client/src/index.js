@@ -25,6 +25,19 @@ class App extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  componentWillMount() {
+    Request
+      .get(`/api/comments/drafts?post_id=${this.state.postID}&user_id=${this.state.userID}`)
+      .then((result) => {
+        if (result.data.draft) {
+          this.setState({
+            lastSyncedText: result.data.draft,
+            currentText: result.data.draft,
+          });
+        }
+      });
+  }
+
   syncServer() {
     const { lastSyncedText, currentText, postID, error, userID } = this.state;
     const patch = createPatch('tmp', lastSyncedText, currentText, 'tmp', 'tmp');
@@ -69,6 +82,7 @@ class App extends Component {
           className={styles['comments-container']}
           placeholder="Write your response..."
           onChange={this.handleInput}
+          value={this.state.currentText}
         />
         <div className={styles.cta}>
           <button className={styles['post-btn']} onClick={this.handleSubmit}>

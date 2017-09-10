@@ -4,11 +4,11 @@ const { Draft } = require('./models/draft');
 const { Comment } = require('./models/comment');
 
 module.exports = {
-  createNewDraft(userID, postID, patch) {
+  createNewDraft(user, post, patch) {
     return new Promise((resolve, reject) => {
       const entry = {
-        userID,
-        postID,
+        user,
+        post,
         draft: applyPatch('', patch),
         updated_at: new Date(),
       };
@@ -33,9 +33,6 @@ module.exports = {
         draft: applyPatch(oldDraft.draft, patch),
         updated_at: new Date(),
       };
-
-      console.log({ oldDraft });
-      console.log({ updatedDraft });
 
       Draft
         .update({ _id: oldDraft._id }, updatedDraft, (err, updated) => {
